@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SR Packaging — Customer Details</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f4f6f8;font-family:Arial,Helvetica,sans-serif;color:#172033}
+.container{max-width:720px;margin:auto;background:#fff;min-height:100vh;padding:22px 18px 40px}
+.header{text-align:center;margin-bottom:24px}
+.header h1{margin:0;font-size:25px}.header p{margin:7px 0 0;color:#667085}
+.section{border:1px solid #e1e6ec;border-radius:18px;padding:18px;margin-bottom:16px;box-shadow:0 5px 18px rgba(20,35,55,.05)}
+.section-title{font-size:19px;font-weight:800;margin-bottom:16px;color:#135f59}
+label{display:block;font-weight:700;margin:14px 0 7px}
+.required{color:#c62828}
+input,select{width:100%;padding:13px 14px;border:1px solid #d5dbe3;border-radius:11px;font-size:16px;outline:none;background:#fff}
+input:focus,select:focus{border-color:#168c82;box-shadow:0 0 0 3px rgba(22,140,130,.10)}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.status{font-size:13px;margin-top:7px;min-height:18px;color:#667085}
+.status.ok{color:#137333}.status.err{color:#b42318}.status.loading{color:#667085}
+.note{background:#f7faf9;border-left:4px solid #168c82;padding:11px 12px;border-radius:8px;font-size:13px;line-height:1.5;color:#475467}
+button{width:100%;border:0;border-radius:12px;padding:14px;font-size:16px;font-weight:800;cursor:pointer}
+.primary{background:#168c82;color:#fff}
+.primary:disabled{opacity:.5;cursor:not-allowed}
+.small{font-size:12px;color:#667085;margin-top:8px;line-height:1.5}
+@media(max-width:520px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>SR Packaging</h1>
+    <p>Customer & Delivery Details</p>
+  </div>
+
+  <section class="section">
+    <div class="section-title">👤 Customer Details</div>
+    <label>Name <span class="required">*</span></label>
+    <input id="name" type="text" placeholder="Enter your name" autocomplete="name">
+
+    <label>📱 Mobile / WhatsApp No. <span class="required">*</span></label>
+    <input id="mobile" type="tel" inputmode="numeric" maxlength="10" placeholder="10-digit mobile number" autocomplete="tel">
+  </section>
+
+  <section class="section">
+    <div class="section-title">🏠 Complete Delivery Address</div>
+
+    <label>House No. / Building Name <span class="required">*</span></label>
+    <input id="house" type="text" placeholder="Jaise: H.No. 123, ABC Apartment" autocomplete="street-address">
+
+    <label>Street / Road / Area <span class="required">*</span></label>
+    <input id="area" type="text" placeholder="Enter street, road or area">
+
+    <label>Landmark</label>
+    <input id="landmark" type="text" placeholder="Optional">
+
+    <label>📍 Pincode <span class="required">*</span></label>
+    <input id="pincode" type="text" inputmode="numeric" maxlength="6" placeholder="Enter 6-digit Pincode" autocomplete="postal-code">
+    <div id="pinStatus" class="status"></div>
+
+    <div class="grid">
+      <div>
+        <label>City / Village <span class="required">*</span></label>
+        <input id="city" type="text" placeholder="Auto-filled from Pincode" readonly>
+      </div>
+      <div>
+        <label>Post Office</label>
+        <input id="postOffice" type="text" placeholder="Auto-filled" readonly>
+      </div>
+    </div>
+
+    <div class="grid">
+      <div>
+        <label>State <span class="required">*</span></label>
+        <input id="state" type="text" placeholder="Auto-filled" readonly>
+      </div>
+      <div>
+        <label>District <span class="required">*</span></label>
+        <input id="district" type="text" placeholder="Auto-filled" readonly>
+      </div>
+    </div>
+
+    <div class="note" style="margin-top:14px">
+      💡 <b>Pincode डालते ही</b> available City/Village, Post Office, District और State details automatically fill हो जाएंगी.
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section-title">🧾 Additional</div>
+    <label>GST No. <span style="font-weight:400;color:#667085">(यदि लागू हो)</span></label>
+    <input id="gst" type="text" placeholder="Optional" maxlength="15" style="text-transform:uppercase">
+    <div class="small">GST number optional है. यदि आपके पास GSTIN है तो दर्ज करें.</div>
+  </section>
+
+  <button class="primary" id="continueBtn" type="button">Continue</button>
+  <div class="small" style="text-align:center">Delivery charges will be confirmed separately on WhatsApp.</div>
+</div>
+
+<script>
+const $ = id => document.getElementById(id);
+
+let lastPin = "";
+
+function clearAutoAddress(){
+  $("city").value="";
+  $("postOffice").value="";
+  $("state").value="";
+  $("district").value="";
+}
+
+async function lookupPincode(pin){
+  if(pin === lastPin) return;
+  lastPin = pin;
+  clearAutoAddress();
+
+  const status = $("pinStatus");
+  status.className="status loading";
+  status.textContent="🔍 Address details fetching...";
+
+  try{
+    const res = await fetch("https://api.postalpincode.in/pincode/" + encodeURIComponent(pin));
+    if(!res.ok) throw new Error("Network error");
+    const data = await res.json();
+
+    if(!Array.isArray(data) || !data[0] || data[0].Status !== "Success" || !data[0].PostOffice?.length){
+      throw new Error("Invalid Pincode");
+    }
+
+    const offices = data[0].PostOffice;
+    const first = offices[0];
+
+    $("city").value = first.Block && first.Block !== "?" ? first.Block : (first.Name || "");
+    $("postOffice").value = first.Name || "";
+    $("state").value = first.State || "";
+    $("district").value = first.District || "";
+
+    // If multiple post offices exist, use the first as the default.
+    // The customer can still see the pincode-derived area details.
+    status.className="status ok";
+    status.textContent="✓ Address details found";
+  }catch(e){
+    lastPin = "";
+    clearAutoAddress();
+    status.className="status err";
+    status.textContent="⚠️ Pincode not found. Please check the 6-digit Pincode.";
+  }
+}
+
+$("pincode").addEventListener("input",()=>{
+  const pin = $("pincode").value.replace(/\D/g,"").slice(0,6);
+  $("pincode").value=pin;
+  if(pin.length===6) lookupPincode(pin);
+  else{
+    lastPin="";
+    clearAutoAddress();
+    $("pinStatus").className="status";
+    $("pinStatus").textContent="";
+  }
+});
+
+$("mobile").addEventListener("input",()=>{
+  $("mobile").value=$("mobile").value.replace(/\D/g,"").slice(0,10);
+});
+
+$("gst").addEventListener("input",()=>{
+  $("gst").value=$("gst").value.toUpperCase().replace(/[^A-Z0-9]/g,"").slice(0,15);
+});
+
+$("continueBtn").addEventListener("click",()=>{
+  const required = [
+    ["name","Please enter your name."],
+    ["mobile","Please enter a valid 10-digit mobile number."],
+    ["house","Please enter House No. / Building Name."],
+    ["area","Please enter Street / Road / Area."],
+    ["pincode","Please enter a valid 6-digit Pincode."],
+    ["city","Please enter a valid Pincode so City/Village can be filled."],
+    ["state","Please enter a valid Pincode so State can be filled."],
+    ["district","Please enter a valid Pincode so District can be filled."]
+  ];
+
+  for(const [id,msg] of required){
+    const el=$(id);
+    if(!el.value.trim() || (id==="mobile" && el.value.length!==10) || (id==="pincode" && el.value.length!==6)){
+      alert(msg);
+      el.focus();
+      return;
+    }
+  }
+
+  alert("Customer details verified. You can now continue to the order summary.");
+});
+</script>
+</body>
+</html>
