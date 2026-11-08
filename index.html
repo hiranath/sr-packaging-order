@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#102b4e">
+<title>SR Packaging | WhatsApp Quotation Generator</title>
+<style>
+:root{--navy:#102b4e;--navy2:#173f70;--yellow:#ffd43b;--bg:#f3f6fa;--ink:#172235;--muted:#667085;--line:#dbe2ea;--white:#fff;--green:#138a52;--red:#b42318}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+header{background:var(--navy);color:#fff;padding:18px 16px;border-bottom:4px solid var(--yellow)}
+.wrap{max-width:980px;margin:auto;padding:16px}
+.brand{font-size:20px;font-weight:800;letter-spacing:.5px}.sub{color:#d5e1ef;font-size:12px;margin-top:3px}
+h1{font-size:22px;margin:16px 0 4px;color:var(--navy)}h2{font-size:16px;margin:0 0 12px;color:var(--navy)}
+.card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin:14px 0;box-shadow:0 2px 8px #102b4e0a}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}label{font-size:12px;font-weight:700;color:#475467}
+input,select{width:100%;min-height:44px;border:1px solid #cbd5e1;border-radius:9px;padding:10px 11px;background:#fff;color:var(--ink);font:inherit}
+input:focus,select:focus{outline:2px solid #9dbce0;border-color:var(--navy2)}
+.phone{display:grid;grid-template-columns:76px 1fr;gap:8px}.prefix{display:flex;align-items:center;justify-content:center;background:#edf2f7;border:1px solid var(--line);border-radius:9px;font-weight:700}
+.product{border:1px solid var(--line);border-radius:12px;padding:13px;margin:12px 0;background:#fbfcfe}
+.product-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:10px;font-weight:800;color:var(--navy)}
+.small{font-size:12px;color:var(--muted)}.price{background:#eef4fb;border-radius:9px;padding:10px;font-weight:700}
+.btn{border:0;border-radius:10px;min-height:44px;padding:11px 15px;font:700 14px system-ui;cursor:pointer}
+.primary{background:var(--navy);color:#fff}.accent{background:var(--yellow);color:#182333}.outline{background:#fff;border:1px solid var(--line);color:var(--navy)}.danger{background:#fff1f0;color:var(--red);border:1px solid #fecdca}
+.actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:12px}.actions .btn{flex:1 1 180px}
+.summary{display:grid;gap:9px}.sumrow{display:flex;justify-content:space-between;gap:12px}.grand{font-size:20px;font-weight:900;color:var(--navy);border-top:1px solid var(--line);padding-top:12px;margin-top:3px}
+.preview{white-space:pre-wrap;overflow-wrap:anywhere;background:#f4f7fb;border:1px solid var(--line);border-radius:10px;padding:13px;font:14px/1.55 system-ui;color:#172235}
+.status{font-size:12px;padding:8px 10px;border-radius:8px;background:#eef4fb;color:var(--navy);margin-top:8px}
+.status.ok{background:#eaf7ef;color:#17663c}.status.err{background:#fff1f0;color:var(--red)}
+.uploadrow{display:flex;flex-wrap:wrap;align-items:center;gap:10px}.uploadrow input{flex:1;min-width:190px}
+footer{text-align:center;color:var(--muted);font-size:11px;padding:20px}
+@media(max-width:600px){.wrap{padding:12px}.grid{grid-template-columns:1fr}.card{padding:13px}.product{padding:11px}h1{font-size:20px}}
+</style>
+</head>
+<body>
+<header><div class="wrap" style="padding:0 16px"><div class="brand">SR PACKAGING</div><div class="sub">Professional WhatsApp Quotation Generator</div></div></header>
+<div class="wrap" style="padding-top:12px"><div class="delivery-banner" style="background:#fff4c2;border:2px solid #e0ad00;color:#6b4b00;padding:12px 14px;border-radius:12px;text-align:center;font-weight:800;letter-spacing:.2px">🚚 NEXT DAY DELIVERY IN RAJASTHAN</div></div>
+<main class="wrap">
+<h1>Quotation Generator</h1>
+<div class="small">Excel-linked pricing · GST 5% default · WhatsApp ready to send</div>
+
+<section class="card">
+  <h2>1. Customer Details</h2>
+  <div class="field"><label for="mobile">CUSTOMER WHATSAPP NUMBER (10 DIGITS)</label>
+    <div class="phone"><div class="prefix">+91</div><input id="mobile" inputmode="numeric" autocomplete="tel-national" maxlength="10" placeholder="Enter 10-digit mobile number"></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>2. Product Details</h2>
+  <div id="products"></div>
+  <div class="actions"><button class="btn outline" id="addProduct" type="button">＋ Add Excel-Priced Product</button><button class="btn accent" id="addManualProduct" type="button">＋ Add Manual Product</button></div>
+  <div class="small" style="margin-top:8px">Use Excel-priced products or add a manual product with your own name, size, ply/type and rate.</div>
+</section>
+
+<section class="card">
+  <h2>3. Taxes & Transportation</h2>
+  <div class="grid">
+    <div class="field"><label for="gstRate">GST RATE</label>
+      <select id="gstRate"><option value="5" selected>5%</option><option value="0">0%</option><option value="12">12%</option><option value="18">18%</option><option value="28">28%</option></select>
+    </div>
+    <div class="field"><label>TRANSPORTATION TERMS</label><div class="small" style="padding:12px;border:1px solid var(--line);border-radius:10px;background:#fff">🚚 Transportation Charges: Extra (To Be Paid by Customer)</div></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>4. Quotation Summary</h2>
+  <div class="summary">
+    <div class="sumrow"><span>Product Subtotal</span><strong id="subtotal">₹0.00</strong></div>
+    <div class="sumrow"><span>Total GST</span><strong id="gstAmount">₹0.00</strong></div>
+    <div class="sumrow"><span>Transportation</span><strong>Extra – Customer to Pay</strong></div>
+    <div class="sumrow grand"><span>GRAND TOTAL</span><span id="grandTotal">₹0.00</span></div>
+  </div>
+</section>
+
+<section class="card">
+  <h2>5. Live WhatsApp Message Preview</h2>
+  <div id="preview" class="preview">🚚 *NEXT DAY DELIVERY IN RAJASTHAN*\n\n📋 *PRODUCT DETAILS*
+
+🔹 Product Name: Corrugated Boxes
+🔹 Size (L × B × H):
+🔹 Ply:
+🔹 Quantity:
+🔹 Price Per Piece:
+🔹 Subtotal:
+🔹 GST:
+🔹 Transportation:
+🔹 *GRAND TOTAL:*</div>
+  <div class="actions">
+    <button class="btn accent" id="send" type="button">SEND QUOTATION ON WHATSAPP</button>
+    <button class="btn outline" id="copy" type="button">COPY QUOTATION</button>
+    <button class="btn danger" id="clear" type="button">CLEAR FORM</button>
+  </div>
+  <div id="message" class="status" role="status">Ready. Select an Excel pricing entry to begin.</div>
+</section>
+
+<section class="card">
+  <h2>6. Update Excel Pricing</h2>
+  <p class="small">Upload a revised .xlsx or .xls file. The app checks the header row and all pricing rows before replacing active prices. Existing data remains active if validation fails.</p>
+  <div class="uploadrow"><input type="file" id="excelFile" accept=".xlsx,.xls"><button class="btn outline" id="importExcel" type="button">IMPORT EXCEL</button></div>
+  <div id="excelStatus" class="status">Pricing entries loaded from your Excel list. Manual product entries can also be added.</div>
+  <div class="small" id="priceCount"></div>
+</section>
+<footer>SR PACKAGING · Pricing is taken from the imported Excel file. Verify the quotation before sending.</footer>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script>
+const INITIAL_PRICING = [{"sr":1,"size":"5 x 4 x 4","price":6.3,"ply":"3 PLY"},{"sr":2,"size":"8 x 4 x 4","price":7.25,"ply":"3 PLY"},{"sr":3,"size":"8 x 5 x 4","price":8.1,"ply":"3 PLY"},{"sr":4,"size":"7 x 4 x 2","price":6.0,"ply":"3 PLY"},{"sr":5,"size":"9 x 4 x 3","price":7.0,"ply":"3 PLY"},{"sr":6,"size":"9 x 3 x 3","price":6.2,"ply":"3 PLY"},{"sr":7,"size":"8 x 4 x 2","price":6.2,"ply":"3 PLY"},{"sr":8,"size":"6 x 5 x 2","price":6.5,"ply":"3 PLY"},{"sr":9,"size":"9 x 2 x 9","price":8.4,"ply":"3 PLY"},{"sr":10,"size":"12 x 4 x 3","price":7.8,"ply":"3 PLY"},{"sr":12,"size":"7 x 4 x 3.5","price":6.65,"ply":"3 PLY"},{"sr":13,"size":"7 x 5 x 3.5","price":7.5,"ply":"3 PLY"},{"sr":14,"size":"7 x 5 x 2.5","price":7.0,"ply":"3 PLY"},{"sr":15,"size":"7 x 4 x 2.5","price":6.2,"ply":"3 PLY"},{"sr":16,"size":"9 x 6 x 4.5","price":9.8,"ply":"3 PLY"},{"sr":17,"size":"4 x 2 x 10","price":7.2,"ply":"3 PLY"},{"sr":18,"size":"4 x 2 x 12","price":7.8,"ply":"3 PLY"},{"sr":19,"size":"4 x 2 x 14","price":8.4,"ply":"3 PLY"},{"sr":20,"size":"4 x 2 x 18","price":9.6,"ply":"3 PLY"},{"sr":22,"size":"10 x 4.5 x 4","price":8.4,"ply":"3 PLY"},{"sr":23,"size":"5.5 x 5 x 3.5","price":7.0,"ply":"3 PLY"},{"sr":24,"size":"4.5 x 4.5 x 2","price":5.8,"ply":"3 PLY"},{"sr":25,"size":"4.75 x 4.75 x 2.5","price":6.15,"ply":"3 PLY"},{"sr":26,"size":"7.5 x 1.5 x 9.5","price":9.5,"ply":"3 PLY"},{"sr":27,"size":"4.5 x 1.5 x 4.5","price":5.5,"ply":"3 PLY"},{"sr":28,"size":"4.5 x 1.5 x 6","price":6.0,"ply":"3 PLY"},{"sr":29,"size":"5 x 4 x 9.5","price":15.6,"ply":"5 PLY"},{"sr":30,"size":"3.5 x 3.5 x 5","price":7.5,"ply":"5 PLY"},{"sr":31,"size":"2.5 x 2.5 x 24","price":10.5,"ply":"3 PLY"},{"sr":32,"size":"3.25 x 3.25 x 17.25","price":10.5,"ply":"3 PLY"},{"sr":33,"size":"4 x 2.5 x 18","price":10.4,"ply":"3 PLY"},{"sr":34,"size":"5.5 x 5.5 x 6","price":11.3,"ply":"5 PLY"},{"sr":35,"size":"6 x 3.5 x 15","price":14.5,"ply":"5 PLY"},{"sr":36,"size":"6.5 x 4.5 x 25","price":17.3,"ply":"3 PLY"},{"sr":37,"size":"7 x 7 x 7","price":11.5,"ply":"3 PLY"},{"sr":38,"size":"8 x 4 x 4","price":9.1,"ply":"5 PLY"},{"sr":39,"size":"8 x 4 x 8","price":9.4,"ply":"3 PLY"},{"sr":40,"size":"8 x 5 x 2.5","price":7.6,"ply":"3 PLY"},{"sr":41,"size":"8.5 x 6.5 x 3","price":9.25,"ply":"3 PLY"},{"sr":42,"size":"9 x 4 x 2","price":6.6,"ply":"3 PLY"},{"sr":43,"size":"9 x 6.5 x 2.5","price":9.0,"ply":"3 PLY"},{"sr":44,"size":"9 x 4.5 x 2.5","price":7.2,"ply":"3 PLY"},{"sr":45,"size":"9 x 3 x 9","price":9.35,"ply":"3 PLY"},{"sr":46,"size":"9 x 9 x 8","price":16.1,"ply":"3 PLY"},{"sr":47,"size":"9 x 5.5 x 9","price":12.1,"ply":"3 PLY"},{"sr":48,"size":"9 x 3 x 9","price":12.8,"ply":"5 PLY"},{"sr":49,"size":"9.5 x 5 x 9.5","price":16.1,"ply":"5 PLY"},{"sr":50,"size":"10 x 2 x 10","price":10.75,"ply":"3 PLY"},{"sr":51,"size":"10 x 2 x 12","price":11.85,"ply":"3 PLY"},{"sr":52,"size":"11 x 1.75 x 14.25","price":12.0,"ply":"3 PLY"},{"sr":53,"size":"11 x 7.5 x 8.5","price":21.0,"ply":"3 PLY"},{"sr":54,"size":"12 x 6 x 12","price":16.8,"ply":"3 PLY"},{"sr":55,"size":"12 x 7 x 18","price":22.0,"ply":"3 PLY"},{"sr":56,"size":"12.5 x 12.5 x 7","price":31.0,"ply":"5 PLY"},{"sr":57,"size":"12 x 5 x 22","price":31.0,"ply":"5 PLY"},{"sr":58,"size":"13 x 6 x 9","price":20.5,"ply":"5 PLY"},{"sr":59,"size":"14 x 10.25 x 13","price":37.0,"ply":"5 PLY"},{"sr":60,"size":"7.5 x 4 x 35","price":32.0,"ply":"5 PLY"},{"sr":61,"size":"11 x 1.5 x 11","price":14.1,"ply":"5 PLY"},{"sr":62,"size":"16 x 6 x 7","price":21.0,"ply":"5 PLY"}];
+let pricing = INITIAL_PRICING.map(x => ({...x}));
+let productCounter = 0;
+const $ = id => document.getElementById(id);
+const money = n => new Intl.NumberFormat('en-IN',{style:'currency',currency:'INR',minimumFractionDigits:2,maximumFractionDigits:2}).format(Number(n)||0);
+const esc = s => String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function setStatus(el,text,type=''){el.textContent=text;el.className='status'+(type?' '+type:'');}
+function optionsForPly(ply){
+  return pricing.filter(x=>x.ply===ply);
+}
+function makeProduct(manual=false){
+  productCounter++;
+  const id=productCounter;
+  const node=document.createElement('div');
+  node.className='product';node.dataset.id=id;node.dataset.mode=manual?'manual':'excel';
+  node.innerHTML=`
+    <div class="product-head"><span>PRODUCT ${document.querySelectorAll('.product').length+1}</span><button class="btn danger remove" type="button">Remove</button></div>
+    <div class="grid">
+      <div class="field"><label>PRODUCT NAME</label><input class="manualName" value="${manual?'':'Corrugated Boxes'}" ${manual?'':'readonly'} placeholder="Enter product name" ${manual?'':'style="display:none"'}></div>
+      ${manual?`<div class="field"><label>SIZE / DIMENSIONS</label><input class="manualSize" placeholder="e.g. 12 × 10 × 8 inches"></div>
+      <div class="field"><label>PLY / TYPE</label><input class="manualPly" placeholder="e.g. 5 PLY"></div>
+      <div class="field"><label>PRICE PER PIECE (₹)</label><input class="manualPrice" type="number" min="0.01" step="0.01" inputmode="decimal" placeholder="Enter price"></div>
+      <div class="field"><label>GST RATE</label><select class="manualGst"><option value="0">0%</option><option value="5" selected>5%</option><option value="12">12%</option><option value="18">18%</option><option value="28">28%</option></select></div>`:
+      `<div class="field"><label>PLY</label><select class="ply"><option value="">Select ply</option>${[...new Set(pricing.map(x=>x.ply))].map(p=>`<option>${esc(p)}</option>`).join('')}</select></div>
+      <div class="field"><label>SIZE (L × B × H)</label><select class="size" disabled><option value="">Select ply first</option></select></div>
+      <div class="field"><label>EXCEL PRICING ENTRY</label><select class="entry" disabled><option value="">Select size first</option></select></div>
+      <div class="field"><label>PRICE PER PIECE</label><div class="price rate">Select Excel entry</div></div>`}
+      <div class="field"><label>QUANTITY (PCS)</label><input class="qty" type="number" min="1" step="1" inputmode="numeric" placeholder="Enter quantity"></div>
+      <div class="field"><label>PRODUCT SUBTOTAL</label><div class="price lineTotal">₹0.00</div></div>
+    </div>`;
+  $('products').appendChild(node);
+  node.querySelector('.remove').addEventListener('click',()=>{if(document.querySelectorAll('.product').length===1){setStatus($('message'),'At least one product row is required.','err');return;}node.remove();renumber();update();});
+  if(!manual){
+    node.querySelector('.ply').addEventListener('change',()=>{
+      const ply=node.querySelector('.ply').value;
+      const size=node.querySelector('.size');
+      const sizes=[...new Set(optionsForPly(ply).map(x=>x.size))];
+      size.innerHTML='<option value="">Select size</option>'+sizes.map(v=>`<option>${esc(v)}</option>`).join('');
+      size.disabled=!ply;
+      node.querySelector('.entry').innerHTML='<option value="">Select size first</option>';
+      node.querySelector('.entry').disabled=true;
+      node.querySelector('.rate').textContent='Select Excel entry';update();
+    });
+    node.querySelector('.size').addEventListener('change',()=>{
+      const size=node.querySelector('.size').value, ply=node.querySelector('.ply').value;
+      const matches=pricing.filter(x=>x.size===size&&x.ply===ply);
+      const entry=node.querySelector('.entry');
+      entry.innerHTML='<option value="">Select exact Excel entry</option>'+matches.map(x=>`<option value="${x.sr}">Excel Sr. No. ${x.sr} — ${money(x.price)} / piece</option>`).join('');
+      entry.disabled=!matches.length;
+      node.querySelector('.rate').textContent='Select Excel entry';update();
+    });
+    node.querySelector('.entry').addEventListener('change',()=>{const x=getSelected(node);node.querySelector('.rate').textContent=x?money(x.price):'Select Excel entry';update();});
+  } else {
+    ['.manualName','.manualSize','.manualPly','.manualPrice'].forEach(sel=>node.querySelector(sel).addEventListener('input',update));
+    node.querySelector('.manualGst').addEventListener('change',update);
+  }
+  node.querySelector('.qty').addEventListener('input',update);
+  renumber();update();
+}
+function getSelected(node){
+  if(node.dataset.mode==='manual'){
+    const name=node.querySelector('.manualName').value.trim();
+    const size=node.querySelector('.manualSize').value.trim();
+    const ply=node.querySelector('.manualPly').value.trim();
+    const price=Number(node.querySelector('.manualPrice').value);
+    if(!name||!size||!ply||!Number.isFinite(price)||price<=0)return null;
+    const gstRate=Number(node.querySelector('.manualGst').value);
+    return {sr:null,name,size,ply,price,manual:true,gstRate};
+  }
+  const sr=Number(node.querySelector('.entry').value);
+  const found=pricing.find(x=>x.sr===sr);
+  return found?{...found,name:'Corrugated Boxes',manual:false}:null;
+}
+function renumber(){document.querySelectorAll('.product').forEach((p,i)=>p.querySelector('.product-head span').textContent='PRODUCT '+(i+1));}
+function calculate(){
+  const items=[];
+  document.querySelectorAll('.product').forEach(node=>{
+    const x=getSelected(node), qty=Number(node.querySelector('.qty').value);
+    const validQty=Number.isInteger(qty)&&qty>0;
+    const subtotal=x&&validQty?x.price*qty:0;
+    const itemRate=x&&x.manual?x.gstRate:Number($('gstRate').value);
+    const itemGst=subtotal*itemRate/100;
+    node.querySelector('.lineTotal').textContent=money(subtotal);
+    items.push({node,x,qty,validQty,subtotal,itemRate,itemGst});
+  });
+  const subtotal=items.reduce((s,x)=>s+x.subtotal,0);
+  const gst=items.reduce((s,x)=>s+x.itemGst,0);
+  return {items,subtotal,gst,transport:0,grand:subtotal+gst,rate:null};
+}
+function buildMessage(c){
+  const selected=c.items.filter(i=>i.x&&i.validQty);
+  let lines=['🚚 *NEXT DAY DELIVERY IN RAJASTHAN*','','📋 *PRODUCT DETAILS*',''];
+  selected.forEach((i,index)=>{
+    if(index)lines.push('','────────────');
+    lines.push(`🔹 Product Name: ${i.x.name||'Corrugated Boxes'}`,`🔹 Size (L × B × H): ${i.x.size}`,`🔹 Ply: ${i.x.ply}`,`🔹 Quantity: ${i.qty} Pcs`,`🔹 Price Per Piece: ${money(i.x.price)}`,`🔹 Subtotal: ${money(i.subtotal)}`,`🔹 GST (${i.itemRate}%): ${money(i.itemGst)}`);
+  });
+  lines.push('',`🔹 *TOTAL GST: ${money(c.gst)}*`,'🚚 Transportation Charges: Extra (To Be Paid by Customer)',`🔹 *PRODUCT TOTAL: ${money(c.grand)}*`,'','💳 Payment: Google Pay / PhonePe','📱 Payment Number: 9004200283');
+  return lines.join('\n');
+}
+function update(){
+  const c=calculate();
+  $('subtotal').textContent=money(c.subtotal);$('gstAmount').textContent=money(c.gst);
+  $('grandTotal').textContent=money(c.grand);
+  $('preview').textContent=buildMessage(c);
+  $('priceCount').textContent=`Active pricing entries: ${pricing.length}`;
+}
+function validate(){
+  const mobile=$('mobile').value.trim();
+  if(!/^[6-9]\d{9}$/.test(mobile)){setStatus($('message'),'Enter a valid 10-digit Indian mobile number (starting 6–9).','err');$('mobile').focus();return false;}
+  const nodes=[...document.querySelectorAll('.product')];
+  if(!nodes.length){setStatus($('message'),'Add at least one product.','err');return false;}
+  for(let i=0;i<nodes.length;i++){
+    const n=nodes[i],x=getSelected(n),qty=Number(n.querySelector('.qty').value);
+    if(!x){
+      const message=n.dataset.mode==='manual'
+        ? `Enter product name, size, ply/type and a valid price for Product ${i+1}.`
+        : `Select a valid Excel pricing entry for Product ${i+1}.`;
+      setStatus($('message'),message,'err');return false;
+    }
+    if(!Number.isInteger(qty)||qty<=0){setStatus($('message'),`Enter a whole-number quantity greater than zero for Product ${i+1}.`,'err');n.querySelector('.qty').focus();return false;}
+  }
+  return true;
+}
+$('addProduct').addEventListener('click',()=>makeProduct(false));
+$('addManualProduct').addEventListener('click',()=>makeProduct(true));
+$('gstRate').addEventListener('change',update);
+
+$('mobile').addEventListener('input',e=>{e.target.value=e.target.value.replace(/\D/g,'').slice(0,10);});
+$('send').addEventListener('click',()=>{
+  if(!validate())return;
+  const message=buildMessage(calculate());
+  const url='https://wa.me/91'+$('mobile').value.trim()+'?text='+encodeURIComponent(message);
+  window.open(url,'_blank','noopener');
+  setStatus($('message'),'WhatsApp opened with the quotation. Review it and press Send in WhatsApp.','ok');
+});
+$('copy').addEventListener('click',async()=>{
+  if(!validate())return;
+  try{await navigator.clipboard.writeText(buildMessage(calculate()));setStatus($('message'),'Quotation copied to clipboard.','ok');}
+  catch(e){setStatus($('message'),'Clipboard access was blocked by the browser. Use WhatsApp sharing instead.','err');}
+});
+$('clear').addEventListener('click',()=>{
+  $('mobile').value='';$('gstRate').value='5';$('products').innerHTML='';makeProduct(false);setStatus($('message'),'Form cleared. Your Excel pricing data has not been changed.','ok');update();
+});
+function parseExcel(file){
+  return new Promise((resolve,reject)=>{
+    if(!window.XLSX){reject(new Error('Excel reader library could not load. Check your internet connection and reload the app.'));return;}
+    const reader=new FileReader();
+    reader.onerror=()=>reject(new Error('Could not read the selected file.'));
+    reader.onload=e=>{
+      try{
+        const book=XLSX.read(e.target.result,{type:'array'});
+        const sheet=book.Sheets[book.SheetNames[0]];
+        const rows=XLSX.utils.sheet_to_json(sheet,{header:1,defval:null,raw:true});
+        const norm=v=>String(v??'').toLowerCase().replace(/\s+/g,' ').trim();
+        let headerIndex=-1,cols={};
+        for(let i=0;i<Math.min(rows.length,30);i++){
+          const vals=rows[i].map(norm);
+          const sr=vals.findIndex(v=>v==='sr. no.'||v==='sr no.'||v==='sr.no.');
+          const size=vals.findIndex(v=>v.includes('size'));
+          const price=vals.findIndex(v=>v.includes('price'));
+          const ply=vals.findIndex(v=>v==='ply'||v.includes('ply'));
+          if(sr>=0&&size>=0&&price>=0&&ply>=0){headerIndex=i;cols={sr,size,price,ply};break;}
+        }
+        if(headerIndex<0)throw new Error('Required columns not found. Expected Sr. No., Size, Price and Ply.');
+        const out=[];
+        for(let i=headerIndex+1;i<rows.length;i++){
+          const r=rows[i],rawSr=r[cols.sr],rawSize=r[cols.size],rawPrice=r[cols.price],rawPly=r[cols.ply];
+          if([rawSr,rawSize,rawPrice,rawPly].every(v=>v===null||v===''))continue;
+          const sr=Number(rawSr),price=Number(rawPrice),size=String(rawSize??'').trim(),ply=String(rawPly??'').trim().toUpperCase();
+          if(!Number.isInteger(sr)||sr<=0||!size||!Number.isFinite(price)||price<=0||!/^(\d+)\s*PLY$/.test(ply))throw new Error(`Invalid pricing row at worksheet row ${i+1}. No data was imported.`);
+          if(out.some(x=>x.sr===sr))throw new Error(`Duplicate Sr. No. ${sr}. No data was imported.`);
+          out.push({sr,size,price,ply});
+        }
+        if(!out.length)throw new Error('No pricing rows found below the header.');
+        resolve(out);
+      }catch(err){reject(err);}
+    };
+    reader.readAsArrayBuffer(file);
+  });
+}
+$('importExcel').addEventListener('click',async()=>{
+  const file=$('excelFile').files[0];
+  if(!file){setStatus($('excelStatus'),'Choose an Excel file first.','err');return;}
+  try{
+    const fresh=await parseExcel(file);
+    pricing=fresh;
+    $('products').innerHTML='';makeProduct(false);
+    setStatus($('excelStatus'),`Successfully imported ${pricing.length} pricing entries from ${file.name}. Original row order and duplicate size/ply entries are preserved.`,'ok');
+    update();setStatus($('message'),'Pricing data updated. Re-select products to use the new Excel prices.','ok');
+  }catch(err){setStatus($('excelStatus'),err.message,'err');}
+});
+makeProduct(false);update();
+</script>
+</body>
+</html>
